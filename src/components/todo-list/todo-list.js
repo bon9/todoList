@@ -3,7 +3,8 @@ const el = <h1>Hello World</h1>
 // без JSX
 const el = React.createElement('h1', null, 'yo'); */
 import React from 'react';
-import TodoListItem from './todo-list-item';
+import TodoListItem from '../todo-list-item';
+import './todo-list.css';
 
 const ToDoList = ({ todos }) => {
 
@@ -12,14 +13,14 @@ const ToDoList = ({ todos }) => {
 		const { id, ...itemProps } = item;
 
 		return (
-			<li key={id}>
+			<li key={id} className="list-group-item">
 				<TodoListItem {...itemProps} />
 			</li>
 		);
 	});
 
 	return (
-		<ul>
+		<ul className="list-group todo-list">
 			{elements}
 		</ul>
 	);

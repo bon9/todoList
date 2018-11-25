@@ -13,6 +13,8 @@ export default class App extends Component {
 		super();
 		this.deleteItem = this.deleteItem.bind(this);
 		this.addItem = this.addItem.bind(this);
+		this.onToggleImportant = this.onToggleImportant.bind(this);
+		this.onToggleDone = this.onToggleDone.bind(this);
 	}
 
 	maxID = 100;
@@ -56,6 +58,14 @@ export default class App extends Component {
 		});
 	};
 
+	onToggleImportant(id) {
+		console.log(`Toggle important ${id}`);
+	}
+
+	onToggleDone(id) {
+		console.log(`Toggle done ${id}`);
+	}
+
 	render() {
 		return (
 			<div className="todo-app">
@@ -67,7 +77,10 @@ export default class App extends Component {
 
 				<ToDoList
 					todos={this.state.todoData}
-					onDeleted={this.deleteItem} />
+					onDeleted={this.deleteItem}
+					onToggleImportant={this.onToggleImportant}
+					onToggleDone={this.onToggleDone}
+				/>
 
 				<ItemAddForm onItemAdded={this.addItem} />
 			</div>

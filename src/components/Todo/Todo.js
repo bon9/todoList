@@ -1,21 +1,49 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 
-import TodoPageHeader from "./todo-page-header";
-import SearchPanel from "./search-panel";
-import ToDoList from "./todo-list";
-import ItemStatusFilter from "./item-status-filter";
-import ItemAddForm from "./item-add-form";
-import "./todo-page.css";
+import axios from "../../axios-todo";
+import HeaderTodo from "./header-todo/header-todo";
+import SearchPanel from "./search-panel/search-panel";
+import ToDoList from "./todo-list/todo-list";
+import ItemStatusFilter from "./item-status-filter/item-status-filter";
+import ItemAddForm from "./item-add-form/item-add-form";
+import "./Todo.css";
 
-export default function TodoPage() {
-  const [todoData, setTodoData] = useState([
-    { label: "Coffee", important: false, done: false, id: 100 },
-    { label: "Make Awesome App", important: false, done: false, id: 101 },
-    { label: "Have a lunch", important: false, done: false, id: 102 }
-  ]);
+export default function Todo() {
+  const [todoData, setTodoData] = useState([]);
   const [term, setTerm] = useState("");
   const [filter, setFilter] = useState("all");
   const [maxID, setMaxId] = useState(103);
+
+  // const todoListReducer = (state, action) => {
+  //     switch (action.type) {
+  //       case "ADD":
+  //         return state.concat(action.payload);
+  //       case "REMOVE":
+  //         return state.filter(todo => todo.id !== action.payload);
+  //       case "SET":
+  //         return action.payload;
+  //       default:
+  //         return state;
+  //     }
+  //   };
+
+  //   const [todoList, dispatch] = useReducer(todoListReducer, []);
+
+  useEffect(() => {
+    axios.get("todos.json").then(res => {
+      const resTodoData = res.data;
+      const todos = [];
+      for (const key in resTodoData) {
+        todos.push({
+          done: resTodoData[key].done,
+          id: key,
+          important: resTodoData[key].important,
+          label: resTodoData[key].label
+        });
+      }
+      setTodoData(todos);
+    });
+  }, []);
 
   const createTodoItem = label => {
     setMaxId(maxID + 1);
@@ -30,27 +58,43 @@ export default function TodoPage() {
   const deleteItem = id => {
     const idx = todoData.findIndex(el => el.id === id);
     const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
+    axios
+      .delete(`todos/${id}.json`)
+      .then(res => {
+        setTodoData(newArray);
+      })
+      .catch(err => console.log(err));
     // const newArray = todoData.filter(item => item.id !== id); //как вариант можно так, но возможно это дольше из за перебора всех элементов
-    setTodoData(newArray);
   };
 
   const addItem = text => {
     const newItem = createTodoItem(text);
-
     const newArray = [...todoData, newItem];
-
-    setTodoData(newArray);
+    axios
+      .post("todos.json", newItem)
+      .then(res => {
+        setTodoData(newArray);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   const toggleProperty = (arr, id, propName) => {
-    // idx индекс меняемой записи
+    // idx меняемой записи
     const idx = arr.findIndex(el => el.id === id);
-    // 1. update object
     const oldItem = arr[idx];
-    // [propName] будет сразу то что пришло, т.е. all, active..: !текущему значению
     const newItem = { ...oldItem, [propName]: !oldItem[propName] };
-    // 2. construct newarray
+    axios
+      .patch(`todos/${oldItem.id}.json`, { [propName]: !oldItem[propName] })
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
     return [...arr.slice(0, idx), newItem, ...arr.slice(idx + 1)];
+    // 2. construct newarray
   };
 
   const onToggleDone = id => {
@@ -96,12 +140,13 @@ export default function TodoPage() {
 
   // отфильтрованные элементы по запросу в строке и кнопке-фильтру (all,active,done)
   const visibleItems = statusFilter(search(todoData, term), filter);
+  console.log(todoData);
   const doneCount = todoData.filter(el => el.done).length;
   const todoCount = todoData.length - doneCount;
 
   return (
     <div className="todo-app">
-      <TodoPageHeader toDo={todoCount} done={doneCount} />
+      <HeaderTodo toDo={todoCount} done={doneCount} />
       <div className="top-panel d-flex">
         <SearchPanel onSearchChange={onSearchChange} />
         <ItemStatusFilter filter={filter} onFilterChange={onFilterChange} />

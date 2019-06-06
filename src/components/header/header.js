@@ -1,12 +1,23 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 
-import "./header.css";
+import "./Header.css";
 
 const Header = props => {
   return (
     <>
-      <button className="btn btn-outline-info">List</button>
-      <button className="btn btn-outline-info">Auth</button>
+      <ul className="nav-items">
+        <li className="nav-item">
+          <NavLink to="/" exact>
+            List
+          </NavLink>
+        </li>
+        <li className="nav-item">
+          <NavLink to="/auth" exact>
+            Auth
+          </NavLink>
+        </li>
+      </ul>
     </>
   );
 };

@@ -4,7 +4,6 @@ import "./Auth.css";
 
 const Auth = props => {
   const [isLogin, setIsLogin] = useState(false);
-  const [isReg, setIsReg] = useState(false);
   const [authForm, setAuthForm] = useState({
     email: {
       type: "email",
@@ -18,7 +17,7 @@ const Auth = props => {
       value: ""
     }
   });
-
+  console.log(isLogin);
   const inputChangedHandler = (event, controlName) => {
     const updateProps = { ...authForm[controlName], value: event.target.value };
     const updateForm = { ...authForm, [controlName]: updateProps };
@@ -32,11 +31,9 @@ const Auth = props => {
 
   const handleLogin = () => {
     setIsLogin(true);
-    setIsReg(false);
   };
 
   const handleReg = () => {
-    setIsReg(true);
     setIsLogin(false);
   };
 

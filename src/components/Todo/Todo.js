@@ -8,26 +8,31 @@ import ItemStatusFilter from "./item-status-filter/item-status-filter";
 import ItemAddForm from "./item-add-form/item-add-form";
 import "./Todo.css";
 
-export default function Todo() {
-  const [todoData, setTodoData] = useState([]);
+export default function Todo(props) {
+  // const [todoData, setTodoData] = useState([]);
   const [term, setTerm] = useState("");
   const [filter, setFilter] = useState("all");
-  const [maxID, setMaxId] = useState(103);
 
-  // const todoListReducer = (state, action) => {
-  //     switch (action.type) {
-  //       case "ADD":
-  //         return state.concat(action.payload);
-  //       case "REMOVE":
-  //         return state.filter(todo => todo.id !== action.payload);
-  //       case "SET":
-  //         return action.payload;
-  //       default:
-  //         return state;
-  //     }
-  //   };
+  const todoListReducer = (state, action) => {
+    switch (action.type) {
+      case "ADD":
+        return state.concat(action.payload);
+      case "DELETE":
+        return state.filter(todo => todo.id !== action.payload);
+      case "SET":
+        return action.payload;
+      case "TOGGLE":
+        return [
+          ...state.slice(0, action.payload.idx),
+          action.payload.newItem,
+          ...state.slice(action.payload.idx + 1)
+        ];
+      default:
+        return state;
+    }
+  };
 
-  //   const [todoList, dispatch] = useReducer(todoListReducer, []);
+  const [todoData, dispatch] = useReducer(todoListReducer, []);
 
   useEffect(() => {
     axios.get("todos.json").then(res => {
@@ -41,68 +46,59 @@ export default function Todo() {
           label: resTodoData[key].label
         });
       }
-      setTodoData(todos);
+      dispatch({ type: "SET", payload: todos });
     });
   }, []);
 
-  const createTodoItem = label => {
-    setMaxId(maxID + 1);
-    return {
-      label,
-      important: false,
-      done: false,
-      id: maxID
-    };
-  };
-
   const deleteItem = id => {
-    const idx = todoData.findIndex(el => el.id === id);
-    const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
+    //const idx = todoData.findIndex(el => el.id === id);
+    // const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
     axios
       .delete(`todos/${id}.json`)
       .then(res => {
-        setTodoData(newArray);
+        dispatch({ type: "DELETE", payload: id });
       })
       .catch(err => console.log(err));
     // const newArray = todoData.filter(item => item.id !== id); //как вариант можно так, но возможно это дольше из за перебора всех элементов
   };
 
   const addItem = text => {
-    const newItem = createTodoItem(text);
-    const newArray = [...todoData, newItem];
+    const createItem = {
+      label: text,
+      important: false,
+      done: false
+    };
     axios
-      .post("todos.json", newItem)
+      .post("todos.json", createItem)
       .then(res => {
-        setTodoData(newArray);
+        const newItem = { ...createItem, id: res.data.name };
+        dispatch({ type: "ADD", payload: newItem });
       })
       .catch(err => {
         console.log(err);
       });
   };
 
-  const toggleProperty = (arr, id, propName) => {
-    // idx меняемой записи
-    const idx = arr.findIndex(el => el.id === id);
-    const oldItem = arr[idx];
+  const toggleProperty = (id, propName) => {
+    const idx = todoData.findIndex(el => el.id === id);
+    const oldItem = todoData[idx];
     const newItem = { ...oldItem, [propName]: !oldItem[propName] };
     axios
       .patch(`todos/${oldItem.id}.json`, { [propName]: !oldItem[propName] })
       .then(res => {
-        console.log(res);
+        dispatch({ type: "TOGGLE", payload: { newItem: newItem, idx: idx } });
       })
       .catch(err => {
         console.log(err);
       });
-    return [...arr.slice(0, idx), newItem, ...arr.slice(idx + 1)];
-    // 2. construct newarray
   };
 
   const onToggleDone = id => {
-    setTodoData(toggleProperty(todoData, id, "done"));
+    toggleProperty(id, "done");
   };
 
   const onToggleImportant = id => {
-    setTodoData(toggleProperty(todoData, id, "important"));
+    toggleProperty(id, "important");
   };
 
   const onSearchChange = term => {
@@ -117,7 +113,6 @@ export default function Todo() {
     if (term.length === 0) {
       return items;
     }
-
     // оставит только item, для которых вернулось true
     return items.filter(item => {
       // вернет true, если найдет term в item
@@ -140,7 +135,6 @@ export default function Todo() {
 
   // отфильтрованные элементы по запросу в строке и кнопке-фильтру (all,active,done)
   const visibleItems = statusFilter(search(todoData, term), filter);
-  console.log(todoData);
   const doneCount = todoData.filter(el => el.done).length;
   const todoCount = todoData.length - doneCount;
 

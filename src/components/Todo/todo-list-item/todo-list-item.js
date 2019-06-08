@@ -4,9 +4,10 @@ import "./todo-list-item.css";
 export default function TodoListItem(props) {
   const {
     label,
-    onDeleted,
-    onToggleImportant,
-    onToggleDone,
+    removeItem,
+    // onToggleImportant,
+    toggleProperty,
+    // onToggleDone,
     done,
     important
   } = props;
@@ -21,14 +22,17 @@ export default function TodoListItem(props) {
 
   return (
     <span className={classNames}>
-      <span className="todo-list-item-label" onClick={onToggleDone}>
+      <span
+        className="todo-list-item-label"
+        onClick={() => toggleProperty("done")}
+      >
         {label}
       </span>
 
       <button
         type="button"
         className="btn btn-outline-success btn-sm float-right"
-        onClick={onToggleImportant}
+        onClick={() => toggleProperty("important")}
       >
         <i className="fa fa-exclamation" />
       </button>
@@ -36,7 +40,7 @@ export default function TodoListItem(props) {
       <button
         type="button"
         className="btn btn-outline-danger btn-sm float-right"
-        onClick={onDeleted}
+        onClick={removeItem}
       >
         <i className="far fa-trash-alt" />
       </button>

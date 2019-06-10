@@ -20,7 +20,7 @@ export default class ItemAddForm extends Component {
 
   onSubmit(e) {
     e.preventDefault();
-    this.props.onAddItem(this.state.label);
+    this.props.onAddItem(this.state.label, this.props.token, this.props.userId);
     // очищаем поле после отрваки
     this.setState({
       label: ""

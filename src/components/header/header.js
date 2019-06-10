@@ -13,9 +13,11 @@ const Header = props => {
           </NavLink>
         </li>
         <li className="nav-item">
-          <NavLink to="/auth" exact>
-            Auth
-          </NavLink>
+          {props.isAuth ? (
+            <NavLink to="/logout">Logout</NavLink>
+          ) : (
+            <NavLink to="/auth">Auth</NavLink>
+          )}
         </li>
       </ul>
     </>

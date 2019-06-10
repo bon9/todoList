@@ -3,57 +3,65 @@ import { put } from "redux-saga/effects";
 import * as actions from "../actions";
 import axios from "../../axios-todo";
 
-export function* initTodoListSaga() {
-  const response = yield axios.get("/todos.json");
-  const resTodoData = response.data;
+export function* initTodoListSaga({ token, userId }) {
+  console.log(userId);
+  yield put(actions.todoListStart());
+  const queryParams = `?auth=${token}&orderBy="userId"&equalTo="${userId}"`;
+  const response = yield axios.get(`/todos.json${queryParams}`);
   const todos = [];
-  for (const key in resTodoData) {
+  for (const key in response.data) {
     todos.push({
-      done: resTodoData[key].done,
+      done: response.data[key].done,
       id: key,
-      important: resTodoData[key].important,
-      label: resTodoData[key].label
+      important: response.data[key].important,
+      label: response.data[key].label
     });
   }
   try {
     yield put(actions.setTodoList(todos));
   } catch (error) {
-    yield put(console.log("[initTodoListSaga]", error));
+    yield put(actions.todoListFail(error));
   }
 }
 
 export function* removeItemSaga({ id }) {
+  yield put(actions.todoListStart());
   yield axios.delete(`todos/${id}.json`);
   try {
     yield put(actions.removeItemSuccess(id));
   } catch (error) {
-    yield put(console.log("[removeItemSaga]", error));
+    yield put(actions.todoListFail(error));
   }
 }
 
-export function* addItemSaga({ label }) {
+export function* addItemSaga({ label, token, userId }) {
+  yield put(actions.todoListStart());
+  console.log(token);
+  console.log(userId);
   const createItem = {
     label: label,
     important: false,
-    done: false
+    done: false,
+    userId: userId
   };
   let newItem = {};
-  yield axios.post("todos.json", createItem).then(res => {
+  yield axios.post(`todos.json?auth=${token}`, createItem).then(res => {
     newItem = { ...createItem, id: res.data.name };
   });
   try {
     yield put(actions.addItemSuccess(newItem));
   } catch (error) {
-    yield put(console.log("[addItemSaga]", error));
+    yield put(actions.todoListFail(error));
   }
 }
 
 export function* togglePropertySaga({ prop, id }) {
+  yield put(actions.todoListStart());
   const response = yield axios.get(`/todos/${id}.json`);
   yield axios.patch(`todos/${id}.json`, { [prop]: !response.data[prop] });
   try {
     yield put(actions.togglePropertySuccess(prop, id));
   } catch (error) {
-    yield put(console.log("[togglePropertySaga]", error));
+    yield put(actions.todoListFail(error));
   }
 }

@@ -30,6 +30,12 @@
   outline: none;
   box-shadow: 0px 0px 6px #28a745;
 }
+
+.Auth input.invalid {
+  outline: none;
+  box-shadow: 0px 0px 1px #dc3545;
+}
+
 .Auth .btn {
   margin: 5px 5px 0;
 }

@@ -12,8 +12,11 @@ import * as actions from "../../store/actions";
 const Todo = props => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("all");
+
   useEffect(() => {
-    props.onInitTodoList();
+    if (props.isAuth) {
+      props.onInitTodoList(props.token, props.userId);
+    }
     console.log("[useEffect Todo]");
   }, []);
 
@@ -58,34 +61,47 @@ const Todo = props => {
   const todoCount = props.todoData.length - doneCount;
   return (
     <div className="todo-app">
-      <HeaderTodo toDo={todoCount} done={doneCount} />
+      <HeaderTodo toDo={todoCount} done={doneCount} isAuth={props.isAuth} />
       <div className="top-panel d-flex">
         <SearchPanel onSearchChange={onSearchChange} />
         <ItemStatusFilter filter={filter} onFilterChange={onFilterChange} />
       </div>
 
-      <ToDoList
-        todos={visibleItems}
-        removeItem={props.onRemoveItem}
-        toggleProperty={props.onToggleProperty}
-      />
+      {props.isAuth ? (
+        <ToDoList
+          todos={visibleItems}
+          removeItem={props.onRemoveItem}
+          toggleProperty={props.onToggleProperty}
+        />
+      ) : (
+        <p>Регайся</p>
+      )}
 
-      <ItemAddForm onAddItem={props.onAddItem} />
+      <ItemAddForm
+        onAddItem={props.onAddItem}
+        token={props.token}
+        userId={props.userId}
+      />
     </div>
   );
 };
 
 const mapStateToProps = state => {
   return {
-    todoData: state.todo.todoData
+    todoData: state.todo.todoData,
+    isAuth: state.auth.token !== null,
+    token: state.auth.token,
+    userId: state.auth.userId
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    onInitTodoList: () => dispatch(actions.initTodoList()),
+    onInitTodoList: (token, userId) =>
+      dispatch(actions.initTodoList(token, userId)),
     onRemoveItem: idItem => dispatch(actions.removeItem(idItem)),
-    onAddItem: label => dispatch(actions.addItem(label)),
+    onAddItem: (label, token, userId) =>
+      dispatch(actions.addItem(label, token, userId)),
     onToggleProperty: (prop, id) => dispatch(actions.toggleProperty(prop, id))
   };
 };

@@ -1,25 +1,41 @@
 import * as actionTypes from "../actions/actionTypes";
 
 const initialState = {
-  todoData: []
+  todoData: [],
+  loading: false,
+  error: false
 };
 
+const todoListStart = (state, action) => {
+  return { ...state, loading: true, error: false };
+};
 const setTodoList = (state, action) => {
-  return { ...state, todoData: action.todoList };
+  return { ...state, todoData: action.todoList, loading: false, error: false };
 };
 
-const removedItem = (state, action) => {
+const todoListFail = (state, action) => {
+  return { ...state, loading: false, error: true };
+};
+
+const removeItemSuccess = (state, action) => {
   return {
     ...state,
-    todoData: state.todoData.filter(todo => todo.id !== action.id)
+    todoData: state.todoData.filter(todo => todo.id !== action.id),
+    loading: false,
+    error: false
   };
 };
 
-const addedItem = (state, action) => {
-  return { ...state, todoData: state.todoData.concat(action.newItem) };
+const addItemSuccess = (state, action) => {
+  return {
+    ...state,
+    todoData: state.todoData.concat(action.newItem),
+    loading: false,
+    error: false
+  };
 };
 
-const toggleProp = (state, action) => {
+const togglePropSuccess = (state, action) => {
   const idx = state.todoData.findIndex(el => el.id === action.id);
   const oldItem = state.todoData[idx];
   const newItem = { ...oldItem, [action.prop]: !oldItem[action.prop] };
@@ -29,23 +45,31 @@ const toggleProp = (state, action) => {
       ...state.todoData.slice(0, idx),
       newItem,
       ...state.todoData.slice(idx + 1)
-    ]
+    ],
+    loading: false,
+    error: false
   };
 };
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.ADD_ITEM_SUCCESS:
-      return addedItem(state, action);
+      return addItemSuccess(state, action);
 
     case actionTypes.REMOVE_ITEM_SUCCESS:
-      return removedItem(state, action);
+      return removeItemSuccess(state, action);
+
+    case actionTypes.TODOLIST_START:
+      return todoListStart(state, action);
+
+    case actionTypes.TODOLIST_FAIL:
+      return todoListFail(state, action);
 
     case actionTypes.SET_TODOLIST:
       return setTodoList(state, action);
 
     case actionTypes.TOGGLE_PROPERTY_SUCCESS:
-      return toggleProp(state, action);
+      return togglePropSuccess(state, action);
 
     default:
       return state;

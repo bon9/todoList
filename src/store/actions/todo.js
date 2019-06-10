@@ -1,11 +1,24 @@
 import * as actionTypes from "./actionTypes";
 
-export const initTodoList = () => {
+export const initTodoList = (token, userId) => {
   return {
-    type: actionTypes.INIT_TODOLIST
+    type: actionTypes.INIT_TODOLIST,
+    token: token,
+    userId: userId
   };
 };
 
+export const todoListStart = () => {
+  return {
+    type: actionTypes.TODOLIST_START
+  };
+};
+export const todoListFail = error => {
+  return {
+    type: actionTypes.TODOLIST_FAIL,
+    error: error
+  };
+};
 export const setTodoList = todoList => {
   return {
     type: actionTypes.SET_TODOLIST,
@@ -27,10 +40,12 @@ export const removeItemSuccess = removedId => {
   };
 };
 
-export const addItem = label => {
+export const addItem = (label, token, userId) => {
   return {
     type: actionTypes.ADD_ITEM,
-    label: label
+    label: label,
+    token: token,
+    userId: userId
   };
 };
 

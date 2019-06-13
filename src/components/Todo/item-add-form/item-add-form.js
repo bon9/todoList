@@ -1,45 +1,47 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
+import Loader from "react-loader-spinner";
+
 import "./item-add-form.css";
 
-export default class ItemAddForm extends Component {
-  constructor() {
-    super();
-    this.onLabelChange = this.onLabelChange.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
-  }
+const ItemAddForm = ({ onAddItem, token, userId, addLoading }) => {
+  const [label, setLabel] = useState("");
+  const [disabledAddButton, setDisabledAddButton] = useState(true);
 
-  state = {
-    label: ""
+  // setDisabledAddButton(label.trim() === "");
+
+  const onLabelChange = e => {
+    setLabel(e.target.value);
+    setDisabledAddButton(e.target.value.trim() === "");
   };
 
-  onLabelChange(e) {
-    this.setState({
-      label: e.target.value
-    });
-  }
-
-  onSubmit(e) {
+  const onSubmit = e => {
     e.preventDefault();
-    this.props.onAddItem(this.state.label, this.props.token, this.props.userId);
-    // очищаем поле после отрваки
-    this.setState({
-      label: ""
-    });
-  }
+    onAddItem(label, token, userId);
+    setLabel("");
+    setDisabledAddButton(true);
+  };
 
-  render() {
-    return (
-      <form className="item-add-form d-flex" onSubmit={this.onSubmit}>
-        <input
-          type="text"
-          className="form-control"
-          onChange={this.onLabelChange}
-          placeholder="What needs to bedone"
-          value={this.state.label}
-        />
-
-        <button className="btn btn-outline-secondary">Add Item</button>
-      </form>
-    );
+  let button = (
+    <button className="btn" disabled={disabledAddButton}>
+      Add Item
+    </button>
+  );
+  if (addLoading) {
+    button = <Loader type="Circles" color="#222" height={30} width={95} />;
   }
-}
+  return (
+    <form className="item-add-form d-flex" onSubmit={onSubmit}>
+      <input
+        autoFocus
+        type="text"
+        className="form-control"
+        onChange={onLabelChange}
+        placeholder="What needs to bedone"
+        value={label}
+      />
+      <div>{button}</div>
+    </form>
+  );
+};
+
+export default ItemAddForm;

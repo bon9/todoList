@@ -1,0 +1,7 @@
+.btn-filter .btn.active {
+  color: var(--white);
+  background-color: var(--second);
+}
+.btn-filter .btn:hover {
+  background-color: var(--second-light);
+}

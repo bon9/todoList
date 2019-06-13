@@ -4,7 +4,6 @@ import * as actions from "../actions";
 import axios from "../../axios-todo";
 
 export function* initTodoListSaga({ token, userId }) {
-  console.log(userId);
   yield put(actions.todoListStart());
   const queryParams = `?auth=${token}&orderBy="userId"&equalTo="${userId}"`;
   const response = yield axios.get(`/todos.json${queryParams}`);
@@ -24,9 +23,9 @@ export function* initTodoListSaga({ token, userId }) {
   }
 }
 
-export function* removeItemSaga({ id }) {
+export function* removeItemSaga({ id, token }) {
   yield put(actions.todoListStart());
-  yield axios.delete(`todos/${id}.json`);
+  yield axios.delete(`todos/${id}.json?auth=${token}`);
   try {
     yield put(actions.removeItemSuccess(id));
   } catch (error) {
@@ -35,9 +34,7 @@ export function* removeItemSaga({ id }) {
 }
 
 export function* addItemSaga({ label, token, userId }) {
-  yield put(actions.todoListStart());
-  console.log(token);
-  console.log(userId);
+  yield put(actions.todoAddItemStart());
   const createItem = {
     label: label,
     important: false,
@@ -55,12 +52,14 @@ export function* addItemSaga({ label, token, userId }) {
   }
 }
 
-export function* togglePropertySaga({ prop, id }) {
+export function* togglePropertySaga({ property, id, token }) {
   yield put(actions.todoListStart());
-  const response = yield axios.get(`/todos/${id}.json`);
-  yield axios.patch(`todos/${id}.json`, { [prop]: !response.data[prop] });
+  const response = yield axios.get(`/todos/${id}.json?auth=${token}`);
+  yield axios.patch(`todos/${id}.json?auth=${token}`, {
+    [property]: !response.data[property]
+  });
   try {
-    yield put(actions.togglePropertySuccess(prop, id));
+    yield put(actions.togglePropertySuccess(property, id));
   } catch (error) {
     yield put(actions.todoListFail(error));
   }

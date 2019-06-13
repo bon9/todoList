@@ -6,20 +6,32 @@ import SearchPanel from "./search-panel/search-panel";
 import ToDoList from "./todo-list/todo-list";
 import ItemStatusFilter from "./item-status-filter/item-status-filter";
 import ItemAddForm from "./item-add-form/item-add-form";
+import AuthRequest from "./auth-request/auth-request";
 import "./Todo.css";
 import * as actions from "../../store/actions";
+import axios from "../../axios-todo.js";
+import withErrorHandler from "./../../hoc/withErrorHandler";
 
-const Todo = props => {
+const Todo = ({
+  todoData,
+  isAuth,
+  token,
+  userId,
+  onInitTodoList,
+  onRemoveItem,
+  onAddItem,
+  onToggleProperty,
+  loading,
+  addLoading
+}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
-    if (props.isAuth) {
-      props.onInitTodoList(props.token, props.userId);
+    if (isAuth) {
+      onInitTodoList(token, userId);
     }
-    console.log("[useEffect Todo]");
-  }, []);
-
+  }, [isAuth, onInitTodoList, token, userId]);
   const onSearchChange = searchQuery => {
     setSearchQuery(searchQuery);
   };
@@ -53,35 +65,41 @@ const Todo = props => {
   };
 
   // отфильтрованные элементы по запросу в строке и кнопке-фильтру (all,active,done)
-  const visibleItems = statusFilter(
-    search(props.todoData, searchQuery),
-    filter
-  );
-  const doneCount = props.todoData.filter(el => el.done).length;
-  const todoCount = props.todoData.length - doneCount;
+  const visibleItems = statusFilter(search(todoData, searchQuery), filter);
+  const doneCount = todoData.filter(el => el.done).length;
+  const todoCount = todoData.length - doneCount;
+
   return (
     <div className="todo-app">
-      <HeaderTodo toDo={todoCount} done={doneCount} isAuth={props.isAuth} />
+      <HeaderTodo toDo={todoCount} done={doneCount} />
       <div className="top-panel d-flex">
         <SearchPanel onSearchChange={onSearchChange} />
         <ItemStatusFilter filter={filter} onFilterChange={onFilterChange} />
       </div>
 
-      {props.isAuth ? (
-        <ToDoList
-          todos={visibleItems}
-          removeItem={props.onRemoveItem}
-          toggleProperty={props.onToggleProperty}
-        />
+      {isAuth ? (
+        <>
+          {todoData.length === 0 ? (
+            <p>Create your first goal !!!</p>
+          ) : (
+            <ToDoList
+              todos={visibleItems}
+              removeItem={onRemoveItem}
+              toggleProperty={onToggleProperty}
+              token={token}
+              loading={loading}
+            />
+          )}
+          <ItemAddForm
+            onAddItem={onAddItem}
+            token={token}
+            userId={userId}
+            addLoading={addLoading}
+          />
+        </>
       ) : (
-        <p>Регайся</p>
+        <AuthRequest />
       )}
-
-      <ItemAddForm
-        onAddItem={props.onAddItem}
-        token={props.token}
-        userId={props.userId}
-      />
     </div>
   );
 };
@@ -89,9 +107,11 @@ const Todo = props => {
 const mapStateToProps = state => {
   return {
     todoData: state.todo.todoData,
-    isAuth: state.auth.token !== null,
+    isAuth: state.auth.token,
     token: state.auth.token,
-    userId: state.auth.userId
+    userId: state.auth.userId,
+    addLoading: state.todo.addLoading,
+    loading: state.todo.loading
   };
 };
 
@@ -99,14 +119,16 @@ const mapDispatchToProps = dispatch => {
   return {
     onInitTodoList: (token, userId) =>
       dispatch(actions.initTodoList(token, userId)),
-    onRemoveItem: idItem => dispatch(actions.removeItem(idItem)),
+    onRemoveItem: (idItem, token) =>
+      dispatch(actions.removeItem(idItem, token)),
     onAddItem: (label, token, userId) =>
       dispatch(actions.addItem(label, token, userId)),
-    onToggleProperty: (prop, id) => dispatch(actions.toggleProperty(prop, id))
+    onToggleProperty: (property, id, token) =>
+      dispatch(actions.toggleProperty(property, id, token))
   };
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Todo);
+)(withErrorHandler(Todo, axios));

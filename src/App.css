@@ -1,3 +1,21 @@
 * {
+  /* --main: #17a2b8; */
+  --main: #ff4040;
+  --main-dark: #ff0000;
+
+  --second: #af3bd4;
+  --second-light: #b964d4;
+
+  --third: #619a00;
+  --third-light: #94cd33;
+
+  --black: #222;
+  --white: #eee;
   box-sizing: border-box;
+}
+
+.app-loader {
+  display: flex;
+  justify-content: center;
+  margin-top: 10%;
 }

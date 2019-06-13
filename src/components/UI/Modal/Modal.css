@@ -1,0 +1,37 @@
+.Modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+  position: fixed;
+  top: 25%;
+  left: 15%;
+  z-index: 500;
+  background-color: white;
+  width: 60%;
+  box-shadow: 0px 0px 10px var(--secondary);
+  padding: 16px;
+  transition: all 0.3s ease-out;
+  font-size: 1.1rem;
+}
+
+.Modal .btn {
+  margin: 5px 5px 0;
+  color: var(--black);
+  border-color: var(--black);
+  background-color: transparent;
+  background-image: none;
+  letter-spacing: 0.5px;
+}
+
+.Modal .btn:hover {
+  background-color: var(--black);
+  color: var(--white);
+}
+
+@media (min-width: 600px) {
+  .Modal {
+    width: 500px;
+    left: calc(50% - 250px);
+  }
+}

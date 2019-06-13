@@ -1,4 +1,5 @@
 import React from "react";
+import "./item-status-filter.css";
 
 export default function ItemStatusFilter({ filter, onFilterChange }) {
   const buttons = [
@@ -9,7 +10,7 @@ export default function ItemStatusFilter({ filter, onFilterChange }) {
 
   const renderButtons = buttons.map(({ name, label }) => {
     const isActive = filter === name;
-    const clazz = isActive ? "btn-info" : "btn-outline-secondary";
+    const clazz = isActive ? "active" : "btn-outline-secondary";
 
     return (
       <button
@@ -23,5 +24,5 @@ export default function ItemStatusFilter({ filter, onFilterChange }) {
     );
   });
 
-  return <div className="btn-group">{renderButtons}</div>;
+  return <div className="btn-group btn-filter">{renderButtons}</div>;
 }

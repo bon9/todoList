@@ -1,6 +1,5 @@
 .Auth {
-  display: block;
-  box-shadow: 0px 4px 12px #17a2b8;
+  box-shadow: 0px 3px 9px var(--second-light);
   max-width: 600px;
   max-height: 500px;
   margin: 2rem auto 0 auto;
@@ -10,32 +9,115 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 500px;
-  padding: 20px;
-  margin: auto;
+  justify-content: flex-start;
+  padding: 20px 40px;
+  width: 100%;
+  min-height: 260px;
 }
 
 .Auth h4 {
   font-weight: normal;
+  margin-bottom: 20px;
 }
 
 .Auth input {
-  margin: 5px 0;
+  margin: 0.4rem 0;
   padding: 3px 5px;
-  width: 80%;
-  box-shadow: 0px 0px 1px #17a2b8;
+  box-shadow: 0px 0px 1px var(--third);
   border: none;
 }
-.Auth input:focus {
-  outline: none;
-  box-shadow: 0px 0px 6px #28a745;
+.Auth input:first-child {
+  margin-top: 2px;
+}
+.Auth input:last-child {
+  margin-bottom: 0;
 }
 
+.Auth input:focus {
+  outline: none;
+  box-shadow: 0px 0px 4px var(--third);
+}
 .Auth input.invalid {
   outline: none;
-  box-shadow: 0px 0px 1px #dc3545;
+  box-shadow: 0px 0px 3px var(--main);
+}
+.composition-wrap {
+  display: flex;
+  width: 100%;
+  min-height: 180px;
+}
+.inputs-btns-wrap {
+  display: flex;
+  flex-direction: column;
+  margin-right: 15px;
+  width: 100%;
+  position: relative;
+}
+.inputs-wrap {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+.Auth .btn.submit {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: var(--black);
+  border-color: var(--black);
+  background-color: transparent;
+  text-transform: uppercase;
+  padding: 0.6rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease-in-out;
+}
+.Auth .btn.submit:hover {
+  background-color: var(--black);
+  color: var(--white);
+}
+
+.Auth .btn.submit span {
+  line-height: 1.2rem;
+}
+.Auth .btn.submit:disabled {
+  background-color: #aaa;
+  color: #fff;
+  border-color: transparent;
+}
+.Auth .btn.submit:disabled:hover {
+  background-color: #aaa;
 }
 
 .Auth .btn {
-  margin: 5px 5px 0;
+  color: var(--black);
+  border-color: var(--second);
+  background-color: transparent;
+  background-image: none;
+  letter-spacing: 0.1rem;
+}
+
+.Auth .btn.active {
+  background-color: var(--second);
+  color: var(--white);
+}
+
+.Auth .btn-group {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+
+.Auth .btn-group .btn {
+  width: 50%;
+  transition: all 0.2s ease;
+}
+.Auth .btn-group .btn:hover {
+  letter-spacing: 0.2rem;
+}
+
+.Auth .btn:disabled {
+  background-color: #aaa;
+  color: #fff;
+  border-color: transparent;
 }

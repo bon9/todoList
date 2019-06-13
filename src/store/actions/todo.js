@@ -13,23 +13,31 @@ export const todoListStart = () => {
     type: actionTypes.TODOLIST_START
   };
 };
+
+export const todoAddItemStart = () => {
+  return {
+    type: actionTypes.TODO_ADD_ITEM_START
+  };
+};
+
 export const todoListFail = error => {
   return {
     type: actionTypes.TODOLIST_FAIL,
     error: error
   };
 };
-export const setTodoList = todoList => {
+export const setTodoList = todoData => {
   return {
     type: actionTypes.SET_TODOLIST,
-    todoList: todoList
+    todoData: todoData
   };
 };
 
-export const removeItem = idItem => {
+export const removeItem = (idItem, token) => {
   return {
     type: actionTypes.REMOVE_ITEM,
-    id: idItem
+    id: idItem,
+    token: token
   };
 };
 
@@ -56,11 +64,12 @@ export const addItemSuccess = newItem => {
   };
 };
 
-export const toggleProperty = (prop, id) => {
+export const toggleProperty = (property, id, token) => {
   return {
     type: actionTypes.TOGGLE_PROPERTY,
-    prop: prop,
-    id: id
+    property: property,
+    id: id,
+    token: token
   };
 };
 

@@ -40,3 +40,29 @@ export const logoutSuccess = () => {
     type: actionTypes.AUTH_LOGOUT
   };
 };
+
+export const startAuthTimeout = (expiretionTime, refreshToken) => {
+  return {
+    type: actionTypes.AUTH_START_TIMEOUT,
+    expiretionTime: expiretionTime,
+    refreshToken: refreshToken
+  };
+};
+export const checkAuthState = () => {
+  return {
+    type: actionTypes.AUTH_CHECK_STATE
+  };
+};
+
+export const errorCancel = () => {
+  return {
+    type: actionTypes.ERROR_CANCEL
+  };
+};
+
+export const refreshToken = refreshToken => {
+  return {
+    type: actionTypes.REFRESH_TOKEN,
+    refreshToken: refreshToken
+  };
+};

@@ -1,7 +1,19 @@
-.todo-list-item {
-  font-size: 1.25rem;
+.btn-outline-success {
+  color: var(--third);
+  border-color: var(--third);
 }
 
+.todo-list-item {
+  display: flex;
+  align-items: flex-end;
+}
+.todo-list-item span {
+  font-size: 1.25rem;
+  display: inline-block;
+  width: 80%;
+  word-wrap: break-word;
+  flex-grow: 1;
+}
 .todo-list-item button {
   width: 35px;
   margin: 3px;
@@ -21,4 +33,14 @@
 .todo-list-item.important .todo-list-item-label {
   font-weight: bold;
   color: steelblue;
+}
+
+@media (max-width: 400px) {
+  .todo-list-item span {
+    width: 60vw;
+    font-size: 1.1rem;
+  }
+  .todo-list-item-label {
+    margin-left: 0.3rem;
+  }
 }

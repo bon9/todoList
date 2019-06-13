@@ -2,15 +2,49 @@ import * as actionTypes from "../actions/actionTypes";
 
 const initialState = {
   todoData: [],
+  addLoading: false,
   loading: false,
   error: false
+};
+
+const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    case actionTypes.ADD_ITEM_SUCCESS:
+      return addItemSuccess(state, action);
+
+    case actionTypes.REMOVE_ITEM_SUCCESS:
+      return removeItemSuccess(state, action);
+
+    case actionTypes.TODOLIST_START:
+      return todoListStart(state, action);
+
+    case actionTypes.TODO_ADD_ITEM_START:
+      return todoAddItemStart(state, action);
+
+    case actionTypes.TODOLIST_FAIL:
+      return todoListFail(state, action);
+
+    case actionTypes.SET_TODOLIST:
+      return setTodoList(state, action);
+
+    case actionTypes.TOGGLE_PROPERTY_SUCCESS:
+      return togglePropSuccess(state, action);
+
+    default:
+      return state;
+  }
 };
 
 const todoListStart = (state, action) => {
   return { ...state, loading: true, error: false };
 };
+
+const todoAddItemStart = (state, action) => {
+  return { ...state, addLoading: true, error: false };
+};
+
 const setTodoList = (state, action) => {
-  return { ...state, todoData: action.todoList, loading: false, error: false };
+  return { ...state, todoData: action.todoData, loading: false, error: false };
 };
 
 const todoListFail = (state, action) => {
@@ -30,7 +64,7 @@ const addItemSuccess = (state, action) => {
   return {
     ...state,
     todoData: state.todoData.concat(action.newItem),
-    loading: false,
+    addLoading: false,
     error: false
   };
 };
@@ -49,31 +83,6 @@ const togglePropSuccess = (state, action) => {
     loading: false,
     error: false
   };
-};
-
-const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    case actionTypes.ADD_ITEM_SUCCESS:
-      return addItemSuccess(state, action);
-
-    case actionTypes.REMOVE_ITEM_SUCCESS:
-      return removeItemSuccess(state, action);
-
-    case actionTypes.TODOLIST_START:
-      return todoListStart(state, action);
-
-    case actionTypes.TODOLIST_FAIL:
-      return todoListFail(state, action);
-
-    case actionTypes.SET_TODOLIST:
-      return setTodoList(state, action);
-
-    case actionTypes.TOGGLE_PROPERTY_SUCCESS:
-      return togglePropSuccess(state, action);
-
-    default:
-      return state;
-  }
 };
 
 export default reducer;
